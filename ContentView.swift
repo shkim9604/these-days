@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct ContentView: View {
+    @StateObject private var weatherViewModel = WeatherViewModel()
+    
     // 현재 메인 관심사
     @State private var mainInterest: String = "날씨"
     
@@ -24,17 +26,27 @@ struct ContentView: View {
                     .stroke(Color.blue, lineWidth: 1)
                     .frame(height: 150)
                     .overlay(
-                        Text("최대관심사(\(mainInterest))")
-                            .foregroundColor(.black)
-                            .font(.headline)
+                        VStack(spacing: 8) {
+                            Text("최대관심사(\(mainInterest))")
+                                .foregroundColor(.black)
+                                .font(.headline)
+                            
+                            if mainInterest == "날씨" {
+                                ForEach(weatherViewModel.filteredItems, id: \.category) { item in
+                                    Text("\(item.category == "PTY" ? "강수형태" : "기온"): \(item.obsrValue)")
+                                        .font(.subheadline)
+                                }
+                            }
+                        }
                     )
                 
                 // 새로고침 + 재설정 버튼
                 HStack {
                     Button(action: {
+                        weatherViewModel.fetchWeather()
                         print("새로고침")
                     }) {
-                        Image(systemName: "repeat")
+                        Image(systemName: "arrow.clockwise")
                             .resizable()
                             .frame(width: 40, height: 40)
                             .foregroundColor(.green)
@@ -52,17 +64,27 @@ struct ContentView: View {
                     }
                 }
                 
-                // 기타 관심사 리스트
+                // 기타 관심사 리스트 (날씨 제외)
                 ScrollView {
                     VStack(spacing: 12) {
                         ForEach(interests, id: \.self) { item in
-                            Text(item)
-                                .frame(maxWidth: .infinity, minHeight: 75)
-                                .padding()
-                                .background(
-                                    RoundedRectangle(cornerRadius: 4)
-                                        .stroke(Color.blue, lineWidth: 1)
-                                )
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(item)
+                                    .bold()
+                                
+                                if item == "날씨" {
+                                    ForEach(weatherViewModel.filteredItems, id: \.category) { weatherItem in
+                                        Text("\(weatherItem.category == "PTY" ? "강수형태" : "기온"): \(weatherItem.obsrValue)")
+                                            .font(.subheadline)
+                                    }
+                                }
+                            }
+                            .frame(maxWidth: .infinity, minHeight: 75)
+                            .padding()
+                            .background(
+                                RoundedRectangle(cornerRadius: 4)
+                                    .stroke(Color.blue, lineWidth: 1)
+                            )
                         }
                     }
                 }
@@ -87,7 +109,6 @@ struct ContentView: View {
                         }
                     }
                     
-                    // 관심사 선택 리스트
                     LazyVGrid(columns: [GridItem(), GridItem()], spacing: 16) {
                         ForEach(interests, id: \.self) { item in
                             Button(action: {
@@ -108,7 +129,6 @@ struct ContentView: View {
                     }
                     .padding(.horizontal)
                     
-                    // 확인 버튼
                     Button(action: {
                         if selectedInterest != nil {
                             showConfirmation = true
@@ -130,24 +150,32 @@ struct ContentView: View {
                 .cornerRadius(12)
             }
         }
-        // 알림창(Confirmation)
+        .onAppear {
+            if mainInterest == "날씨" {
+                weatherViewModel.fetchWeather()
+            }
+        }
         .alert(isPresented: $showConfirmation) {
             Alert(
                 title: Text("최대관심사를 바꾸시겠습니까?"),
                 primaryButton: .default(Text("예"), action: {
                     if let selected = selectedInterest {
                         if let index = interests.firstIndex(of: selected) {
-                            // 1. 기존 메인 관심사로 선택된 항목 자리 덮어쓰기
+                            // 1. 기존 메인 관심사를 교환
                             interests[index] = mainInterest
-                            
-                            // 2. 메인 관심사를 선택된 항목으로 변경
+                            // 2. 메인 관심사 변경
                             mainInterest = selected
+                            
+                            // 3. 새로 메인 관심사가 "날씨"라면 API 다시 호출
+                            if mainInterest != "날씨" && selected == "날씨" {
+                                weatherViewModel.fetchWeather()
+                            }
                         }
                     }
-                    showPopup = false // 팝업 닫기
+                    showPopup = false
                 }),
                 secondaryButton: .cancel(Text("아니요"), action: {
-                    // 그냥 알림창만 닫기, 팝업은 유지
+                    // 팝업 유지
                 })
             )
         }
@@ -157,4 +185,3 @@ struct ContentView: View {
 #Preview {
     ContentView()
 }
-
