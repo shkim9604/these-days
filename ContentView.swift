@@ -2,7 +2,7 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject private var weatherViewModel = WeatherViewModel()
-    
+    @StateObject private var movieViewModel = MovieViewModel()
     // 현재 메인 관심사
     @State private var mainInterest: String = "날씨"
     
@@ -34,6 +34,12 @@ struct ContentView: View {
                             if mainInterest == "날씨" {
                                 ForEach(weatherViewModel.filteredItems, id: \.category) { item in
                                     Text("\(item.category == "PTY" ? "강수형태" : "기온"): \(item.obsrValue)")
+                                        .font(.subheadline)
+                                }
+                            }
+                            if mainInterest == "영화순위" {
+                                ForEach(movieViewModel.filteredItems, id: \.rank) { item in 
+                                    Text("\(item.rank) ~~ \(item.movieNm)")
                                         .font(.subheadline)
                                 }
                             }
@@ -154,6 +160,9 @@ struct ContentView: View {
             if mainInterest == "날씨" {
                 weatherViewModel.fetchWeather()
             }
+            if mainInterest == "영화순위" {
+                movieViewModel.fetchmovie()
+            }
         }
         .alert(isPresented: $showConfirmation) {
             Alert(
@@ -169,6 +178,9 @@ struct ContentView: View {
                             // 3. 새로 메인 관심사가 "날씨"라면 API 다시 호출
                             if mainInterest != "날씨" && selected == "날씨" {
                                 weatherViewModel.fetchWeather()
+                            }
+                            if mainInterest != "영화순위" && selected == "영화순위" {
+                                movieViewModel.fetchmovie()
                             }
                         }
                     }
