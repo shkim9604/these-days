@@ -176,10 +176,10 @@ struct ContentView: View {
                             mainInterest = selected
                             
                             // 3. 새로 메인 관심사가 "날씨"라면 API 다시 호출
-                            if mainInterest != "날씨" && selected == "날씨" {
+                            if mainInterest  == "날씨" {
                                 weatherViewModel.fetchWeather()
                             }
-                            if mainInterest != "영화순위" && selected == "영화순위" {
+                            if mainInterest  == "영화순위" {
                                 movieViewModel.fetchmovie()
                             }
                         }
