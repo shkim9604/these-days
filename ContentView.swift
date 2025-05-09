@@ -18,6 +18,16 @@ struct ContentView: View {
     // 확인 모달 띄우기 여부
     @State private var showConfirmation = false
     
+    //관심사API전부호출
+    func runInterestAction(for interest: String) {
+        let actions: [String: () -> Void] = [
+            "날씨": { weatherViewModel.fetchWeather() },
+            "영화순위": { movieViewModel.fetchmovie() }
+            // 필요시 추가
+        ]
+        actions[interest]?()
+    }
+
     var body: some View {
         ZStack {
             VStack(spacing: 16) {
@@ -82,6 +92,11 @@ struct ContentView: View {
                                     ForEach(weatherViewModel.filteredItems, id: \.category) { weatherItem in
                                         Text("\(weatherItem.category == "PTY" ? "강수형태" : "기온"): \(weatherItem.obsrValue)")
                                             .font(.subheadline)
+                                    }
+                                }
+                                if item == "영화순위" {
+                                    ForEach(movieViewModel.filteredItems, id: \.rank) {movieitem in 
+                                        Text("\(movieitem.rank) ~~ \(movieitem.movieNm)")  
                                     }
                                 }
                             }
@@ -157,11 +172,9 @@ struct ContentView: View {
             }
         }
         .onAppear {
-            if mainInterest == "날씨" {
-                weatherViewModel.fetchWeather()
-            }
-            if mainInterest == "영화순위" {
-                movieViewModel.fetchmovie()
+            runInterestAction(for: mainInterest)
+            for interest in interests {
+                runInterestAction(for: interest)
             }
         }
         .alert(isPresented: $showConfirmation) {
@@ -176,12 +189,7 @@ struct ContentView: View {
                             mainInterest = selected
                             
                             // 3. 새로 메인 관심사가 "날씨"라면 API 다시 호출
-                            if mainInterest  == "날씨" {
-                                weatherViewModel.fetchWeather()
-                            }
-                            if mainInterest  == "영화순위" {
-                                movieViewModel.fetchmovie()
-                            }
+                            runInterestAction(for: mainInterest)
                         }
                     }
                     showPopup = false
