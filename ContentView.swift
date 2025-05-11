@@ -3,6 +3,7 @@ import SwiftUI
 struct ContentView: View {
     @StateObject private var weatherViewModel = WeatherViewModel()
     @StateObject private var movieViewModel = MovieViewModel()
+    @StateObject private var exchangerateViewModel = ExchangeRateViewModel()
     // 현재 메인 관심사
     @State private var mainInterest: String = "날씨"
     
@@ -53,6 +54,11 @@ struct ContentView: View {
                                         .font(.subheadline)
                                 }
                             }
+                            if mainInterest == "환율" {
+                                ForEach(exchangerateViewModel.filterdItems, id: \.cur_unit) { item in 
+                                    Text("\(item.cur_nm): \(item.deal_bas_r)")    
+                                }
+                            }
                         }
                     )
                 
@@ -97,6 +103,11 @@ struct ContentView: View {
                                 if item == "영화순위" {
                                     ForEach(movieViewModel.filteredItems, id: \.rank) {movieitem in 
                                         Text("\(movieitem.rank) ~~ \(movieitem.movieNm)")  
+                                    }
+                                }
+                                if item == "환율" {
+                                    ForEach(exchangerateViewModel.filterdItems, id: \.cur_unit) {rateitem in
+                                        Text("\(rateitem.cur_unit): \(rateitem.deal_bas_r)")    
                                     }
                                 }
                             }
