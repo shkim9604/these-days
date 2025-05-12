@@ -4,6 +4,7 @@ struct ContentView: View {
     @StateObject private var weatherViewModel = WeatherViewModel()
     @StateObject private var movieViewModel = MovieViewModel()
     @StateObject private var exchangerateViewModel = ExchangeRateViewModel()
+    @StateObject private var finedustViewModel = FinedustViewModel()
     // 현재 메인 관심사
     @State private var mainInterest: String = "날씨"
     
@@ -23,7 +24,9 @@ struct ContentView: View {
     func runInterestAction(for interest: String) {
         let actions: [String: () -> Void] = [
             "날씨": { weatherViewModel.fetchWeather() },
-            "영화순위": { movieViewModel.fetchmovie() }
+            "영화순위": { movieViewModel.fetchmovie() },
+            "환율": {exchangerateViewModel.fetchrate()},
+            "미세먼지": {finedustViewModel.fetchFinedust()}
             // 필요시 추가
         ]
         actions[interest]?()
@@ -57,6 +60,11 @@ struct ContentView: View {
                             if mainInterest == "환율" {
                                 ForEach(exchangerateViewModel.filterdItems, id: \.cur_unit) { item in 
                                     Text("\(item.cur_nm): \(item.deal_bas_r)")    
+                                }
+                            }
+                            if mainInterest == "미세먼지" {
+                                ForEach(finedustViewModel.filteredItems, id: \.stationName) {item in 
+                                    Text("\(item.stationName): \(item.pm10Value)")    
                                 }
                             }
                         }
@@ -108,6 +116,11 @@ struct ContentView: View {
                                 if item == "환율" {
                                     ForEach(exchangerateViewModel.filterdItems, id: \.cur_unit) {rateitem in
                                         Text("\(rateitem.cur_unit): \(rateitem.deal_bas_r)")    
+                                    }
+                                }
+                                if item == "미세먼지" {
+                                    ForEach(finedustViewModel.filteredItems, id: \.stationName) {item in 
+                                        Text("\(item.stationName): \(item.pm10Value)")    
                                     }
                                 }
                             }
