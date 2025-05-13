@@ -26,13 +26,23 @@ class FinedustViewModel: ObservableObject {
                 return
             }
             
+            //응답에러
+            if let raw = String(data: data, encoding: .utf8) {
+                print("응답 원문:\n\(raw.prefix(300))")
+                if raw.hasPrefix("<") {
+                    print("HTML 에러 응답입니다.")
+                    return
+                }
+            }
+
+
             do {
-                let decoded = try JSONDecoder().decode(FinedustResponse.self, from: data)
+                let decoded = try JSONDecoder().decode(Finedust.self, from: data)
                 DispatchQueue.main.async {
-                    self.finedustitems = decoded.body.items
+                    self.finedustitems = decoded.response.body.items
                 }
             } catch {
-                print("날씨파싱 실패: \(error)")
+                print("미세먼지 파싱실패: \(error)")
             }
         }.resume()
     }
