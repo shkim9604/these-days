@@ -33,6 +33,15 @@ class WeatherViewModel: ObservableObject {
                 return
             }
             
+            //응답에러
+            if let raw = String(data: data, encoding: .utf8) {
+                print("응답 원문:\n\(raw.prefix(300))")
+                if raw.hasPrefix("<") {
+                    print("HTML 에러 응답입니다.")
+                    return
+                }
+            }
+
             do {
                 let decoded = try JSONDecoder().decode(WeatherResponse.self, from: data)
                 DispatchQueue.main.async {
