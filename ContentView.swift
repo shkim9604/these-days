@@ -5,11 +5,12 @@ struct ContentView: View {
     @StateObject private var movieViewModel = MovieViewModel()
     @StateObject private var exchangerateViewModel = ExchangeRateViewModel()
     @StateObject private var finedustViewModel = FinedustViewModel()
+    @StateObject private var coinViewModel = CoinViewModel()
     // 현재 메인 관심사
     @State private var mainInterest: String = "날씨"
     
     // 기타 관심사 리스트
-    @State private var interests = ["영화순위", "주가지수", "환율", "기타1", "기타2"]
+    @State private var interests = ["영화순위", "코인시세", "환율", "기타1", "기타2"]
     
     // 팝업 띄우기 여부
     @State private var showPopup = false
@@ -26,7 +27,8 @@ struct ContentView: View {
             "날씨": { weatherViewModel.fetchWeather() },
             "영화순위": { movieViewModel.fetchmovie() },
             "환율": {exchangerateViewModel.fetchrate()},
-            "미세먼지": {finedustViewModel.fetchFinedust()}
+            "미세먼지": {finedustViewModel.fetchFinedust()},
+            "코인시세": {coinViewModel.fetchcoin()}
             // 필요시 추가
         ]
         actions[interest]?()
@@ -65,6 +67,11 @@ struct ContentView: View {
                             if mainInterest == "미세먼지" {
                                 ForEach(finedustViewModel.filteredItems, id: \.stationName) {item in 
                                     Text("\(item.stationName): \(item.pm10Value)")    
+                                }
+                            }
+                            if mainInterest == "코인시세" {
+                                ForEach(finedustViewModel.filteredItems, id: \.rank) {item in 
+                                    Text("\(item.rank): \(item.name)")    
                                 }
                             }
                         }
@@ -121,6 +128,11 @@ struct ContentView: View {
                                 if item == "미세먼지" {
                                     ForEach(finedustViewModel.filteredItems, id: \.stationName) {item in 
                                         Text("\(item.stationName): \(item.pm10Value)")    
+                                    }
+                                }
+                                if itemt == "코인시세" {
+                                    ForEach(finedustViewModel.filteredItems, id: \.rank) {item in 
+                                        Text("\(item.rank): \(item.name)")    
                                     }
                                 }
                             }

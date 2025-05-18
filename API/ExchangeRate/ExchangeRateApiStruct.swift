@@ -1,4 +1,4 @@
-import SwiftUI
+import Foundation
 
 struct ExchangeRateResponse: Codable {
     let cur_unit: String
