@@ -13,4 +13,6 @@ struct BoxOfficeResult: Codable {
 struct MovieList: Codable {
     let rank: String
     let movieNm: String
+    let audiCnt: String
+    let audiAcc: String
 }
