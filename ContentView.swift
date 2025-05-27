@@ -10,7 +10,7 @@ struct ContentView: View {
     @State private var mainInterest: String = "날씨"
     
     // 기타 관심사 리스트
-    @State private var interests = ["영화순위", "코인시세", "환율", "기타1", "기타2"]
+    @State private var interests = ["영화순위", "미세먼지", "환율", "코인시세", "기타2"]
     
     // 팝업 띄우기 여부
     @State private var showPopup = false
@@ -55,26 +55,14 @@ struct ContentView: View {
                     .stroke(Color.blue, lineWidth: 1)
                     .frame(height: 150)
                     .overlay(
-                        VStack(spacing: 8) {
-                            Text("최대관심사(\(mainInterest))")
-                                .foregroundColor(.black)
-                                .font(.headline)
-                            
-                            if mainInterest == "날씨" {
-                                let temp = weatherViewModel.filteredItems.first { $0.category == "T1H" }?.obsrValue ?? "-"
-                                let pty = weatherViewModel.filteredItems.first { $0.category == "PTY" }?.obsrValue ?? "-"
-                                let time = weatherViewModel.filteredItems.first?.baseTime ?? "-"
-                                let (ptyText, icon) = weatherDescriptionAndIcon(for: pty)
+                        VStack(alignment: .leading,spacing: 8) {
 
-                                VStack {
-                                    Text("현재시간: \(time)")
-                                    Text("기온: \(temp)℃")
-                                    HStack {
-                                        Image(systemName: icon)
-                                            .foregroundColor(.blue)
-                                        Text("강수형태: \(ptyText)")
-                                    }
-                                }
+                            if mainInterest == "날씨" {
+                                WeatherBoxView(
+                                    temp: weatherViewModel.filteredItems.first { $0.category == "T1H" }?.obsrValue ?? "-",
+                                    time: weatherViewModel.filteredItems.first?.baseTime ?? "-",
+                                    pty: weatherViewModel.filteredItems.first { $0.category == "PTY" }?.obsrValue ?? "-"
+                                )
                             }
                             if mainInterest == "영화순위" {
                                 ForEach(movieViewModel.filteredItems, id: \.rank) { item in 
