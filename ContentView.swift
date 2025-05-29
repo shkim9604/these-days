@@ -60,7 +60,7 @@ struct ContentView: View {
                             if mainInterest == "날씨" {
                                 WeatherBoxView(
                                     temp: weatherViewModel.filteredItems.first { $0.category == "T1H" }?.obsrValue ?? "-",
-                                    time: weatherViewModel.filteredItems.first?.baseTime ?? "-",
+                                    time: DateFormatter.localizedString(from: Date(), dateStyle: .none, timeStyle: .short),
                                     pty: weatherViewModel.filteredItems.first { $0.category == "PTY" }?.obsrValue ?? "-"
                                 )
                             }
