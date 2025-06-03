@@ -9,13 +9,31 @@ class WeatherViewModel: ObservableObject {
     }
     
     func fetchWeather() {
-        let now = Date()
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "ko_KR")
-        formatter.dateFormat = "yyyyMMdd"
-        let baseDate = formatter.string(from: now)
-        formatter.dateFormat = "HHmm"
-        let baseTime = formatter.string(from: now)
+    let now = Date()
+    let calendar = Calendar.current
+
+    let hour = calendar.component(.hour, from: now)
+    let minute = calendar.component(.minute, from: now)
+
+    var baseDate: String
+    var baseTime: String
+
+    let dateFormatter = DateFormatter()
+    dateFormatter.locale = Locale(identifier: "ko_KR")
+    dateFormatter.dateFormat = "yyyyMMdd"
+
+    if minute < 10 {
+        // 10분 이전이면 1시간 전 + 55분으로 설정
+        let adjustedDate = calendar.date(byAdding: .hour, value: -1, to: now)!
+        let adjustedHour = calendar.component(.hour, from: adjustedDate)
+        baseDate = dateFormatter.string(from: adjustedDate)
+        baseTime = String(format: "%02d55", adjustedHour)
+    } else {
+        // 10분 이후면 현재 시각 그대로
+        baseDate = dateFormatter.string(from: now)
+        baseTime = String(format: "%02d%02d", hour, minute)
+    }
+
         let servicekey = "apikey"
         guard let url = URL(string: "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtNcst?serviceKey=\(servicekey)&pageNo=1&numOfRows=5&dataType=json&base_date=\(baseDate)&base_time=\(baseTime)&nx=55&ny=127") else {
             print("잘못된 URL")
