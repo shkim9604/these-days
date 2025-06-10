@@ -4,34 +4,44 @@ struct WeatherBoxView: View {
     let temp: String
     let time: String
     let pty: String
-    
+    let pop: String
+    let reh: String  // 습도(REH) 추가
+    let tmn: String // 최저기온
+    let tmx: String // 최고기온
     var body: some View {
-        let (ptyText, icon) = weatherDescriptionAndIcon(for: pty)
+        let (ptyText, iconName) = WeatherBoxView.weatherDescriptionAndIcon(for: pty)
         
-        VStack(alignment: .leading, spacing: 0) {
-            Text("시간: \(time)")
-                .font(.system(size: 20))
-            Spacer()
-
-            Text("기온: \(temp)℃")
-                .font(.system(size: 20))
-
-            Spacer()
-            HStack(spacing: 8) {
-                Text("강수형태:")
+        HStack {
+            VStack(alignment: .leading, spacing: 12) {
+                //Text("시간: \(time)")
+                    //.font(.system(size: 20))
+                //Text("기온: \(temp)℃")
+                    //.font(.system(size: 20))
+                Text("최저기온: \(tmn)℃")
                     .font(.system(size: 20))
-                Image(systemName: icon)
-                    .foregroundColor(.blue)
-                    .font(.system(size: 22))
-                Text(ptyText)
+                Text("최고기온: \(tmx)℃")
                     .font(.system(size: 20))
-                
+                Text("습도: \(reh)%")
+                    .font(.system(size: 20))
+                Text("강수확률: \(pop)")
+                    .font(.system(size: 20))
             }
+            
+            Spacer()
+            
+            // 강수형태 아이콘 (높이를 부모 뷰에 맞게 조정)
+            Image(systemName: iconName)
+                .resizable()
+                .scaledToFit()
+                .frame(height: 80) // 필요 시 조정 (또는 .frame(maxHeight: .infinity))
+                .foregroundColor(.blue)
+                .padding(.trailing)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.vertical)
+        .frame(maxWidth: .infinity)
     }
     
-    func weatherDescriptionAndIcon(for code: String) -> (String, String) {
+   static func weatherDescriptionAndIcon(for code: String) -> (String, String) {
         switch code {
         case "0": return ("없음", "sun.max.fill")
         case "1": return ("비", "cloud.rain.fill")
