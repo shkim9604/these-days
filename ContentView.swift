@@ -24,7 +24,9 @@ struct ContentView: View {
     //관심사API전부호출
     func runInterestAction(for interest: String) {
         let actions: [String: () -> Void] = [
-            "날씨": { weatherViewModel.fetchWeather() },
+            "날씨": { weatherViewModel.fetchWeather(),
+                    weatherViewModel.fetchMainforecast(),
+                    weatherViewModel.fetchTmnTmxForecast() },
             "영화순위": { movieViewModel.fetchmovie() },
             "환율": {exchangerateViewModel.fetchrate()},
             "미세먼지": {finedustViewModel.fetchFinedust()},
@@ -92,6 +94,11 @@ struct ContentView: View {
                 HStack {
                     Button(action: {
                         weatherViewModel.fetchWeather()
+                        weatherViewModel.fetchMainforecast()
+                        weatherViewModel.fetchTmnTmxForecast()
+                        movieViewModel.fetchmovie()
+                        exchangerateViewModel.fetchrate()
+                        finedustViewModel.fetchFinedust()
                         print("새로고침")
                     }) {
                         Image(systemName: "arrow.clockwise")
@@ -116,15 +123,20 @@ struct ContentView: View {
                 ScrollView {
                     VStack(spacing: 12) {
                         ForEach(interests, id: \.self) { item in
-                            VStack(alignment: .leading, spacing: 4) {
+                            VStack(alignment: .leading) {
                                 Text(item)
                                     .bold()
                                 
                                 if item == "날씨" {
-                                    ForEach(weatherViewModel.filteredItems, id: \.category) { weatherItem in
-                                        Text("\(weatherItem.category == "PTY" ? "강수형태" : "기온"): \(weatherItem.obsrValue)")
-                                            .font(.subheadline)
-                                    }
+                                    let temp = weatherViewModel.filteredItems.first { $0.category == "T1H" }?.obsrValue ?? "-"
+                                    let reh = weatherViewModel.filteredItems.first { $0.category == "REH" }?.obsrValue ?? "-"
+                                    let pty = weatherViewModel.filteredItems.first { $0.category == "PTY" }?.obsrValue ?? "-"
+                                    
+                                    let ptyText = WeatherBoxView.weatherDescriptionAndIcon(for: pty).0
+                                    
+                                    Text("기온: \(temp)℃ / 습도: \(reh)% / 강수: \(ptyText)")
+                                        .font(.system(size: 21))
+                                        .frame(maxWidth: .infinity,alignment: .leading)
                                 }
                                 if item == "영화순위" {
                                     ForEach(movieViewModel.filteredItems, id: \.rank) {movieitem in 
