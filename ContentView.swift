@@ -63,7 +63,11 @@ struct ContentView: View {
                                 WeatherBoxView(
                                     temp: weatherViewModel.filteredItems.first { $0.category == "T1H" }?.obsrValue ?? "-",
                                     time: DateFormatter.localizedString(from: Date(), dateStyle: .none, timeStyle: .short),
-                                    pty: weatherViewModel.filteredItems.first { $0.category == "PTY" }?.obsrValue ?? "-"
+                                    pty: weatherViewModel.filteredItems.first { $0.category == "PTY" }?.obsrValue ?? "-",
+                                    pop: weatherViewModel.forecastFilteredItems.first { $0.category == "POP" }?.fcstValue ?? "-",
+                                    reh: weatherViewModel.filteredItems.first { $0.category == "REH" }?.obsrValue ?? "-",
+                                    tmn: weatherViewModel.forecastItems.first { $0.category == "TMN" }?.fcstValue ?? "-",
+                                    tmx: weatherViewModel.forecastItems.first { $0.category == "TMX" }?.fcstValue ?? "-"
                                 )
                             }
                             if mainInterest == "영화순위" {
