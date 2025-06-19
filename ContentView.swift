@@ -71,10 +71,7 @@ struct ContentView: View {
                                 )
                             }
                             if mainInterest == "영화순위" {
-                                ForEach(movieViewModel.filteredItems, id: \.rank) { item in 
-                                    Text("\(item.rank) ~~ \(item.movieNm) 당일관객: \(item.audiCnt) 누적관객: \(item.audiAcc)")
-                                        .font(.subheadline)
-                                }
+                                MovieBoxView(movies: movieViewModel.movieinfos)
                             }
                             if mainInterest == "환율" {
                                 ForEach(exchangerateViewModel.filterdItems, id: \.cur_unit) { item in 
