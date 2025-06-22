@@ -4,7 +4,7 @@ class CoinViewModel: ObservableObject {
     @Published var coin: [CoinResponse] = []
     
     var filterdItems: [CoinResponse] {
-        coin.filter { $0.rank == 1 || $0.rank == 2}
+        Array(coin.prefix(10))
     }
     
     func fetchcoin() {

@@ -84,9 +84,7 @@ struct ContentView: View {
                                 }
                             }
                             if mainInterest == "코인시세" {
-                                ForEach(finedustViewModel.filteredItems, id: \.rank) {item in 
-                                    Text("\(item.rank): \(item.name)")    
-                                }
+                                CoinBoxView(coins: coinViewModel.filterdItems)
                             }
                         }
                     )
