@@ -21,8 +21,15 @@ struct CoinBoxView: View {
                                 .fontWeight(.semibold)
                             Text("₩\(Int(coin.quotes.KRW.price))")
                                 .font(.body)
-                            Text("\(String(format: "%.2f", coin.quotes.KRW.percent_change_24h))%")
-                                .foregroundColor(coin.quotes.KRW.percent_change_24h >= 0 ? .red : .blue)
+                            HStack(spacing: 4) {
+                                let change = coin.quotes.KRW.percent_change_24h
+                                let color: Color = change >= 0 ? .red : .blue
+                                let arrow = change >= 0 ? "arrow.up" : "arrow.down"
+                                Image(systemName: arrow)
+                                    .foregroundColor(color)
+                                Text("\(String(format: "%.2f", change))%")
+                                    .foregroundColor(color)
+                            }
                         }
                         .padding()
                         .background(Color(UIColor.systemGray6))
