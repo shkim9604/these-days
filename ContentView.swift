@@ -24,8 +24,8 @@ struct ContentView: View {
     //관심사API전부호출
     func runInterestAction(for interest: String) {
         let actions: [String: () -> Void] = [
-            "날씨": { weatherViewModel.fetchWeather(),
-                    weatherViewModel.fetchMainforecast(),
+            "날씨": { weatherViewModel.fetchWeather()
+                    weatherViewModel.fetchMainforecast()
                     weatherViewModel.fetchTmnTmxForecast() },
             "영화순위": { movieViewModel.fetchmovie() },
             "환율": {exchangerateViewModel.fetchrate()},
@@ -152,8 +152,8 @@ struct ContentView: View {
                                         Text("\(item.stationName): \(item.pm10Value)")    
                                     }
                                 }
-                                if itemt == "코인시세" {
-                                    ForEach(finedustViewModel.filteredItems, id: \.rank) {item in 
+                                if item == "코인시세" {
+                                    ForEach(coinViewModel.filteredItems, id: \.rank) {item in 
                                         Text("\(item.rank): \(item.name)")    
                                     }
                                 }
